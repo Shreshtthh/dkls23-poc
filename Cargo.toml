@@ -1,0 +1,43 @@
+[package]
+name = "dkls23-poc"
+version = "0.1.0"
+edition = "2021"
+license = "MIT OR Apache-2.0"
+description = "Proof-of-concept implementation of DKLs23 threshold ECDSA protocol"
+repository = "https://github.com/LFDT-Lockness/round-based"
+keywords = ["mpc", "threshold-signatures", "tss", "ecdsa", "dkls23"]
+categories = ["cryptography"]
+
+[dependencies]
+# Lockness ecosystem
+round-based = { git = "https://github.com/LFDT-Lockness/round-based", branch = "m", default-features = false, features = ["derive"] }
+generic-ec = { version = "0.5", default-features = false, features = ["serde"] }
+
+# Cryptographic primitives
+rand_core = { version = "0.6", default-features = false }
+sha2 = { version = "0.10", default-features = false }
+digest = { version = "0.10", default-features = false }
+
+# Serialization
+serde = { version = "1", default-features = false, features = ["derive", "alloc"] }
+
+# Error handling
+thiserror = { version = "2", default-features = false }
+
+# We don't use it directly, but we need to enable `serde` feature
+generic-array = { version = "0.14", features = ["serde"] }
+
+[dev-dependencies]
+round-based = { git = "https://github.com/LFDT-Lockness/round-based", branch = "m", features = ["derive", "sim", "sim-async"] }
+generic-ec = { version = "0.5", features = ["curve-secp256k1", "curve-secp256r1"] }
+
+tokio = { version = "1", features = ["macros", "rt"] }
+rand = "0.8"
+rand_dev = "0.1"
+hex = "0.4"
+
+[features]
+default = ["std", "curve-secp256k1"]
+std = []
+curve-secp256k1 = ["generic-ec/curve-secp256k1"]
+curve-secp256r1 = ["generic-ec/curve-secp256r1"]
