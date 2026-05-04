@@ -31,7 +31,7 @@ DKLs23 achieves threshold ECDSA in just **three rounds** of communication, offer
 │            ├── Sign (Protocol 3.6) ──► (r, s) ──┤               │
 │  Party 1 ──┘                                    └── Party 1     │
 │                                                                 │
-│  Standard ECDSA Verify(pk, H(m), σ) ══► ✅ VALID                 
+│  Standard ECDSA Verify(pk, H(m), σ) ══►  VALID                 
 │                                                                 │
 └─────────────────────────────────────────────────────────────────┘
 ```
@@ -50,11 +50,11 @@ Every module in this crate maps directly to a specific section of the DKLs23 pap
 
 | Paper Section | Protocol / Functionality | Crate Module | Status |
 |---|---|---|---|
-| §7, Protocol 7.1 | πRelaxedKeyGen (Relaxed Threshold Key Generation) | [`src/keygen/`](src/keygen/) | ✅ Fully implemented |
-| §3.2, Protocol 3.6 | πECDSA (Three-Round Signing) | [`src/sign/`](src/sign/) | ✅ Fully implemented |
-| §3.1, Functionality 3.4 | F_RVOLE (Random Vector OLE) | [`src/mul/`](src/mul/) | ✅ Ideal simulation |
-| §2.1, Algorithm 2.3 | ECDSAVerify | [`src/sign/mod.rs`](src/sign/mod.rs#verify_signature) | ✅ Fully implemented |
-| §5 | RVOLE from Random OT (SoftSpokenOT) | - | 🔜 Production target |
+| §7, Protocol 7.1 | πRelaxedKeyGen (Relaxed Threshold Key Generation) | [`src/keygen/`](src/keygen/) | Implemented |
+| §3.2, Protocol 3.6 | πECDSA (Three-Round Signing) | [`src/sign/`](src/sign/) | Implemented |
+| §3.1, Functionality 3.4 | F_RVOLE (Random Vector OLE) | [`src/mul/`](src/mul/) | Ideal simulation |
+| §2.1, Algorithm 2.3 | ECDSAVerify | [`src/sign/mod.rs`](src/sign/mod.rs#verify_signature) | Implemented |
+| §5 | RVOLE from Random OT (SoftSpokenOT) | - | Production target |
 
 ### Key Generation - Protocol 7.1 (πRelaxedKeyGen)
 
