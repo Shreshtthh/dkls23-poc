@@ -92,7 +92,10 @@ where
         .await
         .map_err(KeygenError::Round1Send)?;
 
-    let commitments = mpc.complete(round1).await.map_err(KeygenError::Round1Receive)?;
+    let commitments = mpc
+        .complete(round1)
+        .await
+        .map_err(KeygenError::Round1Receive)?;
 
     // --- Round 2: Decommit ---
     mpc.send_to_all(Msg::Round2(Round2Msg {
@@ -103,7 +106,10 @@ where
     .await
     .map_err(KeygenError::Round2Send)?;
 
-    let reveals = mpc.complete(round2).await.map_err(KeygenError::Round2Receive)?;
+    let reveals = mpc
+        .complete(round2)
+        .await
+        .map_err(KeygenError::Round2Receive)?;
 
     // --- Step 4: Verify ---
     let mut guilty_parties = Vec::new();
@@ -142,7 +148,7 @@ where
         // Accumulate joint public polynomial
         for (k, coeff) in reveal.public_coefficients.iter().enumerate() {
             if k < joint_public_coeffs.len() {
-                joint_public_coeffs[k] = joint_public_coeffs[k] + *coeff;
+                joint_public_coeffs[k] += *coeff;
             }
         }
 
@@ -150,10 +156,8 @@ where
         if let Some(eval) = reveal.share_evaluations.iter().find(|e| e.recipient == i) {
             // Feldman verification: pⱼ(i+1) · G =? Pⱼ evaluated at (i+1)
             let share_point: Point<E> = Point::generator() * eval.value;
-            let expected_point = evaluate_public_polynomial_coeffs(
-                &reveal.public_coefficients,
-                &my_x,
-            );
+            let expected_point =
+                evaluate_public_polynomial_coeffs(&reveal.public_coefficients, &my_x);
 
             if share_point != expected_point {
                 guilty_parties.push(KeygenBlame {
@@ -165,17 +169,22 @@ where
             }
 
             // Accumulate total Shamir share: p(i) = Σⱼ pⱼ(i)
-            my_share = my_share + eval.value;
+            my_share += eval.value;
         }
     }
 
     // --- Round 3: Ok/Abort ---
     let verification_ok = guilty_parties.is_empty();
-    mpc.send_to_all(Msg::Round3(Round3Msg { ok: verification_ok }))
-        .await
-        .map_err(KeygenError::Round3Send)?;
+    mpc.send_to_all(Msg::Round3(Round3Msg {
+        ok: verification_ok,
+    }))
+    .await
+    .map_err(KeygenError::Round3Send)?;
 
-    let oks = mpc.complete(round3).await.map_err(KeygenError::Round3Receive)?;
+    let oks = mpc
+        .complete(round3)
+        .await
+        .map_err(KeygenError::Round3Receive)?;
 
     if !verification_ok {
         return Err(KeygenError::InvalidDecommitment { guilty_parties });
@@ -212,10 +221,7 @@ where
 
 /// Evaluates a polynomial `p(x) = a₀ + a₁·x + a₂·x² + ...` at point `x`
 /// using Horner's method. Coefficients are SecretScalars.
-fn evaluate_polynomial<E: Curve>(
-    coefficients: &[SecretScalar<E>],
-    x: &Scalar<E>,
-) -> Scalar<E> {
+fn evaluate_polynomial<E: Curve>(coefficients: &[SecretScalar<E>], x: &Scalar<E>) -> Scalar<E> {
     let mut result = Scalar::<E>::zero();
     for coeff in coefficients.iter().rev() {
         result = result * x + coeff.as_ref();
