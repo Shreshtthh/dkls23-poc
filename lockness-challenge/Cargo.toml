@@ -1,0 +1,17 @@
+[package]
+name = "lockness-challenge"
+version = "0.1.0"
+edition = "2021"
+
+[dependencies]
+generic-ec = { version = "0.5", features = [
+    "curve-secp256k1",
+    "curve-secp384r1",
+    "curve-ed25519",
+] }
+rand_core = "0.6"
+sha2 = "0.10"
+
+[dev-dependencies]
+rand = "0.8"
+hex = "0.4"
